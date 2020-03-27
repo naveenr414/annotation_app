@@ -1,0 +1,24 @@
+{
+  "name": "annotation-app",
+  "repository": "none",
+  "version": "1.0.0",
+  "description": "An app to show entity links for quizbowl questions",
+  "scripts": {
+    "dev": "parcel src/index.html"
+  },
+  "keywords": [],
+  "author": "Naveen Raman",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^3.8.3"
+  },
+  "proxy": "http://localhost:8000",
+  "dependencies": {
+    "@material-ui/core": "^4.9.7",
+    "babel-types": "^6.26.0",
+    "interweave": "^12.3.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  }
+}
