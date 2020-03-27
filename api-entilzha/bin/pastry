@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+import requests
+import click
+
+
+@click.group()
+def cli():
+    pass
+
+
+def read_api():
+    req = requests.get(
+        "https://www.pedro.ai/api/paste/v1/read",
+        params={'key': 'herebedragons'}
+    ).json()
+    print(req['content'])
+
+
+
+def write_api(is_url, content):
+    requests.post(
+        "https://www.pedro.ai/api/paste/v1/write",
+        params={'key': 'herebedragons'},
+        json={"content": content, "is_url": is_url}
+    )
+
+@cli.command()
+def read():
+    read_api()
+
+
+@cli.command()
+def r():
+    read_api()
+
+
+@cli.command()
+@click.option('--is-url', default=True, type=bool)
+@click.argument('content')
+def write(is_url, content):
+    write_api(is_url, content)
+
+
+@cli.command()
+@click.option('--is-url', default=True, type=bool)
+@click.argument('content')
+def w(is_url, content):
+    write_api(is_url, content)
+
+
+if __name__ == '__main__':
+    cli()
