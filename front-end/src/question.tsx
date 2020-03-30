@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Markup } from 'interweave';
 import { Button } from '@material-ui/core';
+import './Question.css';
+
 
 export default class Question extends React.Component {  
   state = {
@@ -43,8 +45,16 @@ export default class Question extends React.Component {
     this.state.currently_tagged.push(i);
   }
   
+  changeBold = (e) => {
+    e.target.style.fontWeight = 'bold';
+  }
+  
+    changeUnbold = (e) => {
+    e.target.style.fontWeight = 'normal';
+  }
+  
   get_question = () => {
-    let words = this.state.question_text.split(" ");
+    let words = this.state.question_text.split(/[ ,]+/);
     var entity_pointer = 0;
     var entity_length = this.state.entity_locations.length;
     
@@ -75,19 +85,22 @@ export default class Question extends React.Component {
         // At the end, when we close, add in the actual entity 
         word+="(" + this.state.entities[entity_pointer]+ ")";
         entity_pointer+=1;
-        
-        console.log(word);
-        
-        let ret = <mark id={comma_seperated} style={{backgroundColor: "yellow"}}key={i}> {word}</mark>
+                
+        let ret = <mark   id={comma_seperated} style={{backgroundColor: "#a6e22d"}}key={i}> {word}</mark>
         all_tags.push(<mark key={i+0.5} style={{backgroundColor: "white"}}> &nbsp;</mark>);        
         all_tags.push(ret);
       }
       else {
-        let ret=<mark id={i} key={i+1} style={{backgroundColor: "white"}} onClick={(function(i,f) {return function() {f(i)}})(i,this.addToTag)}> {words[i]} </mark> ;
+        let ret=<mark id={i} key={i+1} onMouseEnter={this.changeBold} onMouseLeave={this.changeUnbold} style={{backgroundColor: "white"}} onClick={(function(i,f) {return function() {f(i)}})(i,this.addToTag)}> {words[i]} </mark> ;
         i+=1;
         all_tags.push(ret);
       }
     }
+    
+    if(this.state.preview) {
+      return all_tags.slice(0,20);
+    }
+    
     return all_tags;
   }
   
@@ -158,20 +171,20 @@ function removeDuplicates(array) {
   
   render () {
     return (
-      <div>
+      <div className="Question">
         <h3> {this.state.tournament} </h3> 
         <h4> {this.editable()} </h4> 
         <br /> 
         <b> Entities: </b> {this.state.entities.join(",")}
         <br /> 
         
-        <div className="question">
-        {this.get_question() }       
+        <div className="QuestionText">
+        {this.get_question()} <Button className="ellipse" onClick={this.switch_preview}> {"..."} </Button>       
         </div>
         
         <br /> 
-        <Button onClick={this.switch_preview}> Toggle Question </Button> 
-        <Button onClick={this.switch_edit}> Toggle Edit </Button> 
+        <Button onClick={this.switch_edit}
+        > Toggle Edit </Button> 
       </div>
     );
   }

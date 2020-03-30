@@ -1,0 +1,16 @@
+.Question {
+  padding-left: 20px;
+  font-size: 30px !important;
+}
+
+.Entity {
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  padding-top: 20px;
+}
+
+
+Mark {
+  border-radius: 100px;
+}
