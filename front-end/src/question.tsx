@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Markup } from 'interweave';
-import { Button } from '@material-ui/core';
-import './Question.css';
-
+import { Button, Input } from '@material-ui/core';
+import './Question.css';  
+import TaggedInfo from './TaggedInfo';
 
 export default class Question extends React.Component {  
   state = {
@@ -13,7 +13,7 @@ export default class Question extends React.Component {
     entity_locations: [],
     currently_tagged: [],
     preview: true,
-    edit: false, 
+    edit: true, 
   };
   
   constructor(props) {
@@ -42,7 +42,12 @@ export default class Question extends React.Component {
   
   /* Add another word to the current entity */ 
   addToTag = (i) => {
-    this.state.currently_tagged.push(i);
+    let temp_array = this.state.currently_tagged
+    temp_array.push(i);
+    this.setState({
+      currently_tagged: temp_array;
+    });
+    
   }
   
   changeBold = (e) => {
@@ -54,7 +59,7 @@ export default class Question extends React.Component {
   }
   
   get_question = () => {
-    let words = this.state.question_text.split(/[ ,]+/);
+    let words = this.state.question_text.replace("\xa0"," ").split(/[ ,]+/);
     var entity_pointer = 0;
     var entity_length = this.state.entity_locations.length;
     
@@ -114,14 +119,6 @@ export default class Question extends React.Component {
       
   }
 
-  editable = () => {
-    if(this.state.edit) {
-      return "Editable";
-    }
-    else{
-      return "Not Editable"  ;
-    }
-  }
   
   switch_preview = () => {
     this.setState({
@@ -129,18 +126,13 @@ export default class Question extends React.Component {
     });
   }
   
-  switch_edit = () => { 
-function removeDuplicates(array) {
+  callbackFunction = (new_entity) => {
+  function removeDuplicates(array) {
   return array.filter((a, b) => array.indexOf(a) === b)
 };
-    if(this.state.edit) {
-      console.log(this.state.currently_tagged); 
-      if(this.state.currently_tagged.length > 0) {
-        let new_entity = prompt("What is the entity?");
         let new_array = this.state.currently_tagged.slice(0);
         new_array.sort();
         new_array = removeDuplicates(new_array);
-        alert(new_array);
         // Write the new entity 
         // Find out where in the list to write it
         let found = false;
@@ -156,36 +148,35 @@ function removeDuplicates(array) {
           this.state.entity_locations.push(new_array);
           this.state.entities.push(new_entity);
         }
-        this.state.currently_tagged = [];
+        
         
         this.write_entities(this.state.question_id,this.state.entity_locations,this.state.entities);
         
-
-      }
-    }
-  
-    this.setState({
-      edit: !this.state.edit;
-    });
+    this.setState({currently_tagged: []});
   }
   
   render () {
+const trigger = <Button>Open Modal</Button>;
+
     return (
       <div className="Question">
         <h3> {this.state.tournament} </h3> 
-        <h4> {this.editable()} </h4> 
         <br /> 
         <b> Entities: </b> {this.state.entities.join(",")}
         <br /> 
+        <TaggedInfo callbackFunction={this.callbackFunction} question_text={this.state.question_text} tags={this.state.currently_tagged} /> 
+        <br />
         
         <div className="QuestionText">
-        {this.get_question()} <Button className="ellipse" onClick={this.switch_preview}> {"..."} </Button>       
-        </div>
-        
+        {this.get_question()} <Button className="ellipse" onClick={this.switch_preview}> {"..."} </Button> 
+
         <br /> 
-        <Button onClick={this.switch_edit}
-        > Toggle Edit </Button> 
+        </div>
+        <br /> 
+
+
       </div>
+            
     );
   }
 }
